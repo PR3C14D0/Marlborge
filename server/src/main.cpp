@@ -9,10 +9,13 @@
 #include <thread>
 #include <mutex>
 #include <map>
+#include <time.h>
 #include <string>
 
 void ListenThread();
 void ClientThread(SOCKET sock);
+
+std::string GenRandStr(int nLength);
 
 std::map<std::string, SOCKET> clients;
 std::mutex clientsMutex;
@@ -20,6 +23,8 @@ std::mutex clientsMutex;
 #define IP_ADDR "127.0.0.1"
 #define PORT 5000
 #define MAXCONN 1200
+
+#define HANDSHAKE 0x01
 
 int main() {
 	WSADATA wsa;
@@ -114,12 +119,41 @@ void ListenThread() {
 		clientsMutex.unlock();
 
 		std::thread clientThread(ClientThread, client);
+		clientThread.detach();
 	}
+}
+
+std::string GenRandStr(int nLength) {
+	const std::string alphaNum =
+		"0123456789"
+		"abcdefghijklmnopqrstuvwxyz"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	std::string randStr;
+	std::srand(time(nullptr));
+	for (int i = 0; i < nLength; i++) {
+		int nRandNum = rand() % (sizeof(alphaNum) - 1);
+		randStr += alphaNum[nRandNum];
+	}
+
+	return randStr;
 }
 
 void ClientThread(SOCKET sock) {
 	/* HANDSHAKE STAGE */
+	char handshake[1];
+	recv(sock, handshake, sizeof(handshake), 0);
 
+	if (handshake[0] == HANDSHAKE) {
+		std::string code = GenRandStr(16);
+		char hsBuff[1024];
+		int nBuffSize = 0;
+		hsBuff[0] = HANDSHAKE;
+		nBuffSize++;
+		memcpy(&hsBuff[nBuffSize], code.data(), code.size());
+		nBuffSize += code.size();
+		send(sock, hsBuff, nBuffSize, 0);
+	}
 
 	bool bConnected = true;
 	while (bConnected) {
