@@ -13,6 +13,21 @@ if len(data) > 0 and data[0] == 0x01:
 	s.send(response)
 time.sleep(1)
 
+data = s.recv(1024)
+packet = data[0]
+ipLength = data[1]
+ipEnd = 2 + ipLength;
+ip = data[2:ipEnd].decode()
+port = data[ipEnd]
+duration = data[ipEnd + 1]
+
+print(data)
+
+if packet == 0x02:
+	print(ip)
+	print(port)
+	print(duration)
+
 s.send(bytes([0x10]))
 data = s.recv(1024)
 
