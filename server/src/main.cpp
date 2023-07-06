@@ -12,6 +12,7 @@
 #include <string>
 
 void ListenThread();
+void ClientThread(SOCKET sock);
 
 std::map<std::string, SOCKET> clients;
 std::mutex clientsMutex;
@@ -111,5 +112,17 @@ void ListenThread() {
 		clientsMutex.lock();
 		clients[clientIp] = client;
 		clientsMutex.unlock();
+
+		std::thread clientThread(ClientThread, client);
+	}
+}
+
+void ClientThread(SOCKET sock) {
+	/* HANDSHAKE STAGE */
+
+
+	bool bConnected = true;
+	while (bConnected) {
+
 	}
 }
