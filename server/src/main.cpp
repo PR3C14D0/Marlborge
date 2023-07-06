@@ -40,7 +40,7 @@ std::mutex clientsMutex;
 #define MAXCONN 1200
 
 #define AUTH 0x01
-#define DISCONNECT 0xFF
+#define DISCONNECT 0x10
 
 int main() {
 	WSADATA wsa;
@@ -220,8 +220,15 @@ void ClientThread(SOCKET sock, std::string ip) {
 
 	bool bConnected = true;
 	while (bConnected) {
-
+		char buffer[1];
+		recv(sock, buffer, sizeof(buffer), 0);
+		if ((UINT)buffer[0] == DISCONNECT) {
+			Disconnect(ip);
+			bConnected = false;
+		}
 	}
+
+	return;
 }
 
 void Disconnect(std::string ip) {
@@ -236,5 +243,5 @@ void Disconnect(std::string ip) {
 }
 
 void SIGINTHandler(int signal) {
-
+	
 }
