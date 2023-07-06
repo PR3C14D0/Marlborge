@@ -45,6 +45,7 @@ std::mutex clientsMutex;
 #define AUTH 0x01
 #define ATTACK 0x02
 #define DISCONNECT 0x10
+#define SUCCESS 0x0F
 
 int main() {
 	WSADATA wsa;
@@ -252,6 +253,10 @@ void ClientThread(SOCKET sock, std::string ip) {
 
 		if (respCode != code)
 			Disconnect(ip);
+		else {
+			char success[] = { SUCCESS };
+			send(sock, success, sizeof(success), 0);
+		}
 	}
 
 	bool bConnected = true;

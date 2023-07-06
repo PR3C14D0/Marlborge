@@ -1,4 +1,4 @@
-add_executable ("MarlborgeInjector" "main.cpp" "dllmain.cpp")
+add_executable ("MarlborgeInjector" "main.cpp")
 add_library ("MarlborgeDLL" SHARED "dllmain.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
