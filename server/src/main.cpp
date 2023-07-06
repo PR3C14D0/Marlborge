@@ -8,6 +8,15 @@
 #include <WS2tcpip.h>
 
 int main() {
+	WSADATA wsa;
+	int nRes = WSAStartup(MAKEWORD(2, 2), &wsa);
+
+	if (nRes != 0) {
+		std::cout << "[ERROR] An error occured during WSAStartup." << std::endl;
+		throw std::exception();
+		return 1;
+	}
+
 
 
 	return 0;
