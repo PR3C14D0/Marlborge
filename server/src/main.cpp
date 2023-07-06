@@ -9,6 +9,7 @@
 #include <thread>
 #include <mutex>
 #include <map>
+#include <string>
 
 void ListenThread();
 
@@ -31,9 +32,23 @@ int main() {
 
 	std::thread listenThread(ListenThread);
 	listenThread.detach();
+	
+	std::cout <<
+		"  __  __            _ _                          \n"
+		" |  \\/  |          | | |                         \n"
+		" | \\  / | __ _ _ __| | |__   ___  _ __ __ _  ___ \n"
+		" | |\\/| |/ _` | '__| | '_ \\ / _ \\| '__/ _` |/ _ \\ \n"
+		" | |  | | (_| | |  | | |_) | (_) | | | (_| |  __/\n"
+		" |_|  |_|\\__,_|_|  |_|_.__/ \\___/|_|  \\__, |\\___|\n"
+		"                                       __/ |     \n"
+		"                                      |___/      \n\n";
+
+	std::cout << "Welcome to Marlborge" << std::endl;
+	std::cout << "Made for educational purposes only" << std::endl;
+	std::cout << std::endl << "Github: https://github.com/PR3C14D0/Marlborge" << std::endl;
 
 	while (true) {
-
+		
 	}
 
 	return 0;
