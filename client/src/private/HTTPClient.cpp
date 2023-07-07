@@ -34,4 +34,9 @@ void HTTPClient::GET(std::string url, ADDR_TYPE type) {
 
 	std::string httpGet = "GET / HTTP/1.1\r\nHost: " + url + "\r\n\r\n";
 	send(sock, httpGet.data(), httpGet.size(), 0);
+
+	char respBuff[1024];
+	recv(sock, respBuff, sizeof(respBuff), NULL);
+
+	closesocket(sock);
 }

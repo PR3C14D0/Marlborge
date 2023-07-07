@@ -1,5 +1,5 @@
 /*
-	Simple HTTP Client that doesn't check for the server response. Only makes GETs.
+	Simple HTTP Client that doesn't check for the server response, only receives the response. Only makes GETs.
 */
 
 #pragma once
