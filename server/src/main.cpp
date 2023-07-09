@@ -27,7 +27,7 @@ enum COMMAND {
 enum DDOS_METHOD {
 	HTTP = 0x40,
 	HTTPS = 0x41,
-	UNKNOWN = 0x00
+	UNKNOWN_METHOD = 0x00
 };
 
 void ListenThread();
@@ -260,7 +260,7 @@ COMMAND TranslateCommand(std::string cmd) {
 }
 
 DDOS_METHOD TranslateMethod(std::string method) {
-	DDOS_METHOD ddos_method = DDOS_METHOD::UNKNOWN;
+	DDOS_METHOD ddos_method = DDOS_METHOD::UNKNOWN_METHOD;
 
 	if (method == "http")
 		ddos_method = DDOS_METHOD::HTTP;
