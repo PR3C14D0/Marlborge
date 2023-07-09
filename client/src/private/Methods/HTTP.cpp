@@ -1,7 +1,7 @@
 #include "Methods/HTTP.h"
 
 void HTTP::Attack(std::string url, int nDuration) {
-	HTTPClient http { };
+	HTTPClient http { false };
 	time_t start_time = time(nullptr);
 
 	/* Attack to the specified URL during the specified time. */

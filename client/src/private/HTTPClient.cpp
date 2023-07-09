@@ -1,7 +1,7 @@
 #include "HTTPClient.h"
 
-HTTPClient::HTTPClient() {
-
+HTTPClient::HTTPClient(bool bSSL) {
+	this->m_bSSL = bSSL;
 }
 
 void HTTPClient::GET(std::string url, ADDR_TYPE type) {

@@ -16,7 +16,9 @@ enum ADDR_TYPE {
 };
 
 class HTTPClient {
+private:
+	bool m_bSSL;
 public:
-	HTTPClient();
+	HTTPClient(bool bSSL);
 	void GET(std::string url, ADDR_TYPE type);
 };
