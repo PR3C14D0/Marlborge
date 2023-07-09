@@ -100,7 +100,7 @@ void Main() {
 
 	std::cout << "[SUCCESS] Authenticated with the CnC" << std::endl;
 
-	HTTPClient http { };
+	
 }
 
 void DebugMode() {
