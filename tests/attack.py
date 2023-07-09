@@ -11,6 +11,9 @@ if len(data) > 0 and data[0] == 0x01:
 	print("Received: " + code)
 	response = bytes([0x01]) + code.encode()
 	s.send(response)
+	stat = s.recv(1)
+	if stat[0] != 0x0F:
+		print("Error")
 time.sleep(1)
 
 data = s.recv(1024)

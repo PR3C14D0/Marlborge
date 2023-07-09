@@ -120,8 +120,13 @@ int main() {
 			nBufferSize += nIPLength;
 			buffer[nBufferSize] = nPort;
 			nBufferSize++;
-			buffer[nBufferSize] = nTime;
-			nBufferSize++;
+			/* Last 4 bytes will be for the time. */
+			UINT unTime = ntohl(nTime);
+			UCHAR* chTime = (UCHAR*)&unTime;
+			for (int i = 0; i < sizeof(UINT); i++) {
+				buffer[nBufferSize] = (UINT)chTime[i];
+				nBufferSize++;
+			}
 
 			for (std::pair<std::string, SOCKET> client : clients) {
 				send(client.second, buffer, nBufferSize, 0);
