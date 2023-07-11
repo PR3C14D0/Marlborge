@@ -9,6 +9,9 @@
 #include "Util.h"
 #include <string>
 #include <errno.h>
+#include <random>
+#include "UserAgents.h"
+#include <time.h>
 
 enum ADDR_TYPE {
 	IPv4 = 0,
