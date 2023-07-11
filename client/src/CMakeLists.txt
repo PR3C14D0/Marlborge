@@ -7,6 +7,12 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 set("PRIVATE_INCLUDES" "${CMAKE_CURRENT_SOURCE_DIR}/public")
+set("GLOBAL_INCLUDES" "${CMAKE_CURRENT_SOURCE_DIR}/../../includes")
+
+set("LIB" "${CMAKE_CURRENT_SOURCE_DIR}/../../lib")
+set("OPENSSL_LIB" "${LIB}/openssl/libssl.lib;${LIB}/openssl/libcrypto.lib")
 
 target_link_libraries(MarlborgeDLL "ws2_32.lib")
+target_link_libraries(MarlborgeDLL "${OPENSSL_LIB}")
 target_include_directories(MarlborgeDLL PRIVATE "${PRIVATE_INCLUDES}")
+target_include_directories(MarlborgeDLL PUBLIC "${GLOBAL_INCLUDES}")
