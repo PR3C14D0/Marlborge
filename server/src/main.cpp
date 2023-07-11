@@ -54,6 +54,7 @@ std::mutex clientsMutex;
 #define ATTACK 0x02
 #define DISCONNECT 0x10
 #define SUCCESS 0x0F
+#define TIMEOUT 0x11
 
 int main() {
 	WSADATA wsa;
