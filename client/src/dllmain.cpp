@@ -100,8 +100,6 @@ void Main() {
 	}
 
 	std::cout << "[SUCCESS] Authenticated with the CnC" << std::endl;
-
-	HTTP_METHOD::Attack("127.0.0.1:3000", 300);
 }
 
 void DebugMode() {

@@ -1,5 +1,5 @@
 add_executable ("MarlborgeInjector" "main.cpp")
-add_library ("MarlborgeDLL" SHARED "dllmain.cpp" "public/HTTPClient.h" "private/HTTPClient.cpp" "public/Util.h" "public/Methods/HTTP.h" "private/Methods/HTTP.cpp" "public/UserAgents.h")
+add_library ("MarlborgeDLL" SHARED "dllmain.cpp" "public/HTTPClient.h" "private/HTTPClient.cpp" "public/Util.h" "public/Methods/HTTP.h" "private/Methods/HTTP.cpp" "public/UserAgents.h" "public/Referers.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET MarlborgeInjector PROPERTY CXX_STANDARD 20)

@@ -33,10 +33,12 @@ void HTTPClient::GET(std::string url, ADDR_TYPE type) {
 
 	srand(time(nullptr));
 	std::string user_agent = user_agents[rand() % ((sizeof(user_agents) / sizeof(std::string)) - 1)];
+	std::string referer = referers[rand() % ((sizeof(referers) / sizeof(std::string)) - 1)];
 	std::string httpGet = 
 		"GET / HTTP/1.1\r\n: "					
 		"Host: " + url + "\r\n"
-		"User-Agent: " + user_agent + "\r\n\r\n";
+		"User-Agent: " + user_agent + "\r\n"
+		"Referer: " + referer + "\r\n\r\n";
 
 	send(sock, httpGet.data(), httpGet.size(), 0);
 
