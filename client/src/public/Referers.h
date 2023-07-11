@@ -154,7 +154,6 @@ const std::string referers[] = {
     "https://www.pga.com/",
     "https://www.mls.com/live",
     "https://www.twitch.tv/directory",
-    "https://www.mixer.com/browse/",
     "https://www.youtube.com/channels",
     "https://www.vimeo.com/categories",
     "https://www.dailymotion.com/us",
