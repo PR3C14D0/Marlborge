@@ -93,10 +93,10 @@ void HTTPClient::GET(std::string url, ADDR_TYPE type) {
 		recv(sock, respBuff, sizeof(respBuff), NULL);
 	}
   
-  delete respBuff;
-  closesocket(sock);
+	delete respBuff;
+	closesocket(sock);
 	
-  if (this->m_bSSL) {
+	if (this->m_bSSL) {
 		SSL_free(ssl);
 		SSL_CTX_free(ssl_ctx);
 	}
